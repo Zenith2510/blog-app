@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Post;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,4 +24,6 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-require __DIR__.'/auth.php';
+Route::get('/posts', Post::class)->name('posts');
+
+require __DIR__ . '/auth.php';
