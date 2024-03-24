@@ -16,6 +16,11 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .post_link:hover {
+            color: gray;
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased">
