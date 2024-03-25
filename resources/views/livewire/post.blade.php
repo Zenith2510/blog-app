@@ -1,10 +1,13 @@
 {{-- @dd($posts) --}}
+
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="flex justify-between " style="margin-bottom: 20px">
             <div class=""></div>
-            <x-primary-button x-data=""
-                x-on:click.prevent="$dispatch('open-modal', 'confirm-post-add')">{{ __('Create Post') }}</x-primary-button>
+            <x-primary-button x-data="" wire:click="resetDatas"
+                x-on:click.prevent="$dispatch('open-modal', 'confirm-post-add')">
+                {{ __('Create Post') }}
+            </x-primary-button>
         </div>
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div class="flex justify-between p-6">
@@ -32,7 +35,10 @@
                             Read more
                         </p>
                         <div class="mx-auto">
+                            <x-primary-button x-data="" wire:click="confirmPostEdit({{ $post->id }})"
+                                x-on:click.prevent="$dispatch('open-modal', 'confirm-post-edit')">{{ __('Edit') }}</x-primary-button>
                             <x-danger-button x-data=""
+                                wire:click="confirmPostDeletion({{ $post->id }})"
                                 x-on:click.prevent="$dispatch('open-modal', 'confirm-post-delete')">{{ __('Delete') }}</x-danger-button>
                         </div>
                     </div>
@@ -44,9 +50,9 @@
                 @endif --}}
             </div>
         </div>
-        <div class="mt-5">
-            {{-- {{ $posts->links() }} --}}
-        </div>
+        {{-- <ul class="pagination">
+            {{ $posts->links() }}
+        </ul> --}}
     </div>
 
     {{-- create modal --}}
@@ -81,29 +87,71 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-primary-button class="ms-3">
+                <x-primary-button class="ms-3" x-on:click="$dispatch('close')">
                     {{ __('Create') }}
                 </x-primary-button>
             </div>
         </form>
     </x-modal>
 
-    {{-- delete modal --}}
-    <x-modal name="confirm-post-delete" :show="$errors->isNotEmpty()" focusable>
-        <form wire:submit="deletePost" class="p-6">
 
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                {{ __('Are you sure you want to delete your Post?') }}
-            </h2>
+    {{-- delete modal --}}
+    <x-modal wire:model.defer="confirmingPostDeletion" name="confirm-post-delete" :show="$errors->isNotEmpty()" focusable>
+        <form wire:submit="deletePost({{ $confirmingPostDeletion }})" x-on:click="$dispatch('close')" class="p-6">
+            @if ($confirmingPostDeletion)
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    {{ __('Are you sure you want to delete your :title?', ['title' => $this->getPostTitle($confirmingPostDeletion)]) }}
+                </h2>
+            @endif
             <div class="mt-6 flex justify-end">
                 <x-secondary-button x-on:click="$dispatch('close')">
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3">
+                <x-danger-button type='submit' class="ms-3">
                     {{ __('Delete') }}
                 </x-danger-button>
             </div>
         </form>
+    </x-modal>
+
+    {{-- edit modal --}}
+    <x-modal wire:model.defer="confirmingPostEdit" name="confirm-post-edit" :show="$errors->isNotEmpty()" focusable>
+        <form wire:submit.prevent="editPost({{ $confirmingPostEdit }})" class="p-6">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                {{ __('Edit Post') }}
+            </h2>
+            <!-- Title -->
+            <div class="mt-6">
+                <x-input-label for="title" value="{{ __('title') }}" class="sr-only" />
+
+                <x-text-input wire:model="title" id="title" name="title" type="text" class="mt-1 block w-3/4"
+                    placeholder="{{ __('Title') }}" />
+
+                <x-input-error :messages="$errors->get('title')" class="mt-2" />
+            </div>
+
+            <div class="mt-6">
+                <x-input-label for="title" value="{{ __('Content') }}" class="sr-only" />
+
+                <x-text-input wire:model="content" id="content" name="content" type="text" class="mt-1 block w-3/4"
+                    placeholder="{{ __('Content') }}" />
+
+                <x-input-error :messages="$errors->get('content')" class="mt-2" />
+            </div>
+
+
+            <div class="mt-6 flex justify-center">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-primary-button class="ms-3" x-on:click="$dispatch('close')">
+                    {{ __('Save') }}
+                </x-primary-button>
+            </div>
+
+        </form>
+
     </x-modal>
 </div>
