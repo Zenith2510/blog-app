@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 class Post extends Component
 {
     use WithPagination;
-    public $posts, $post, $title, $content, $search = '';
+    public  $post, $title, $content, $search = '';
     public $deleteId = '';
     public $confirmingPostDeletion = false;
     public $confirmingPostEdit = false;
@@ -51,15 +51,16 @@ class Post extends Component
     public function render()
     {
 
-        $this->posts = ModelsPost::query();
-        // dd($this->posts);
+        $query = ModelsPost::query();
+        // dd($query->get());
         if ($this->search != '') {
-            $this->posts = $this->posts->where('title', 'like', "%$this->search%")
+            $query = $query->where('title', 'like', "%$this->search%")
                 ->orWhere('content', 'like', "%$this->search%");
         }
-        $this->posts = $this->posts->get();
+        $posts = $query->paginate(10);
+        // dd($posts);
         return view('livewire.post', [
-            'posts' => $this->posts,
+            'posts' => $posts,
         ]);
     }
 

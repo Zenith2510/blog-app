@@ -14,45 +14,50 @@
                 <div class=""></div>
 
                 {{-- search --}}
-                <form>
-                    <x-text-input type="text" class="search-input" wire:model.live="search" class="mt-1 block w-1/4"
-                        placeholder="{{ __('Search') }}" />
-                </form>
+                @if ($posts->count() > 0)
+                    <form>
+                        <x-text-input type="text" class=" search-input " wire:model.live="search"
+                            class="mt-1 block w-1/4" placeholder="{{ __('Search') }}" />
+                    </form>
+                @endif
 
             </div>
+            {{-- @dd($posts) --}}
             <div class="p-6 text-gray-900 dark:text-gray-100">
-                {{-- @if ($posts) --}}
-                @foreach ($posts as $post)
-                    {{-- @dd($post) --}}
-                    <div
-                        class="max-w-sm p-6 bg-white text-center mb-4 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <h5 class="mb-2 text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white">
-                            {{ $post['title'] }}</h5>
-                        <p class="mb-3 font-normal text-center text-gray-700 dark:text-gray-400">
-                            {{ $post['content'] }}</p>
-                        <p wire:click='postDetail({{ $post->id }})'
-                            class="inline-flex text-center items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 post_link">
-                            Read more
-                        </p>
-                        <div class="mx-auto">
-                            <x-primary-button x-data="" wire:click="confirmPostEdit({{ $post->id }})"
-                                x-on:click.prevent="$dispatch('open-modal', 'confirm-post-edit')">{{ __('Edit') }}</x-primary-button>
-                            <x-danger-button x-data=""
-                                wire:click="confirmPostDeletion({{ $post->id }})"
-                                x-on:click.prevent="$dispatch('open-modal', 'confirm-post-delete')">{{ __('Delete') }}</x-danger-button>
+                @if ($posts->count() > 0)
+                    @foreach ($posts as $post)
+                        {{-- @dd($post) --}}
+                        <div
+                            class="max-w-sm p-6 bg-white text-center mb-4 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                            <h5
+                                class="mb-2 text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white">
+                                {{ $post['title'] }}</h5>
+                            <p class="mb-3 font-normal text-center text-gray-700 dark:text-gray-400">
+                                {{ $post['content'] }}</p>
+                            <p wire:click='postDetail({{ $post->id }})'
+                                class="inline-flex text-center items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 post_link">
+                                Read more
+                            </p>
+                            <div class="mx-auto">
+                                <x-primary-button x-data=""
+                                    wire:click="confirmPostEdit({{ $post->id }})"
+                                    x-on:click.prevent="$dispatch('open-modal', 'confirm-post-edit')">{{ __('Edit') }}</x-primary-button>
+                                <x-danger-button x-data=""
+                                    wire:click="confirmPostDeletion({{ $post->id }})"
+                                    x-on:click.prevent="$dispatch('open-modal', 'confirm-post-delete')">{{ __('Delete') }}</x-danger-button>
+                            </div>
                         </div>
-                    </div>
-                @endforeach
-                {{-- @else
-                    <div class="text-center text-orange-500">
+                    @endforeach
+                @else
+                    <div class="text-center mb-6">
                         {{ __('No Post created yet!') }}
                     </div>
-                @endif --}}
+                @endif
             </div>
         </div>
-        {{-- <ul class="pagination">
+        <div class="mt-5">
             {{ $posts->links() }}
-        </ul> --}}
+        </div>
     </div>
 
     {{-- create modal --}}
