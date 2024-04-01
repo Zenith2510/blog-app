@@ -14,48 +14,50 @@
                 <div class=""></div>
 
                 {{-- search --}}
-                @if ($posts->count() > 0)
-                    <form>
-                        <x-text-input type="text" class=" search-input " wire:model.live="search"
-                            class="mt-1 block w-1/4" placeholder="{{ __('Search') }}" />
-                    </form>
-                @endif
+                {{-- @if ($posts->count() > 0) --}}
+                <form>
+                    <x-text-input type="text" class="search-input " wire:model.live.debounce.1000="search"
+                        class="mt-1 block w-1/4" placeholder="{{ __('Search') }}" />
+                </form>
+                {{-- @endif --}}
 
             </div>
             {{-- @dd($posts) --}}
             <div class="p-6 text-gray-900 dark:text-gray-100">
-                @if ($posts->count() > 0)
-                    @foreach ($posts as $post)
-                        {{-- @dd($post) --}}
-                        <div
-                            class="max-w-sm p-6 bg-white text-center mb-4 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                            <h5
-                                class="mb-2 text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white">
-                                {{ $post['title'] }}</h5>
-                            <p class="mb-3 font-normal text-center text-gray-700 dark:text-gray-400">
-                                {{ $post['content'] }}</p>
-                            <p wire:click='postDetail({{ $post->id }})'
-                                class="inline-flex text-center items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 post_link">
-                                Read more
-                            </p>
-                            <div class="mx-auto">
-                                <x-primary-button x-data=""
-                                    wire:click="confirmPostEdit({{ $post->id }})"
-                                    x-on:click.prevent="$dispatch('open-modal', 'confirm-post-edit')">{{ __('Edit') }}</x-primary-button>
-                                <x-danger-button x-data=""
-                                    wire:click="confirmPostDeletion({{ $post->id }})"
-                                    x-on:click.prevent="$dispatch('open-modal', 'confirm-post-delete')">{{ __('Delete') }}</x-danger-button>
-                            </div>
+                @forelse ($posts as $post)
+                    <div
+                        class="max-w-sm p-6 bg-white text-center mb-4 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                        <h5 class="mb-2 text-lg text-start font-bold tracking-tight text-gray-900 dark:text-white">
+                            {{ $post['title'] }} <span
+                                class="text-gray-400">{{ $post->created_at ? $post->created_at->diffForHumans() : '' }}</span>
+                            <span
+                                class="bg-white text-start text-gray-400 items-center me-2 px-3 py-0.5 rounded-full ">{{ $post->tag->name }}</span>
+                        </h5>
+
+                        <p class="mb-3 mt-3 font-normal  text-gray-700 dark:text-gray-400" style="text-align: justify">
+                            {{ $post['content'] }}</p>
+                        <p wire:click='postDetail({{ $post->id }})' style="cursor: pointer;"
+                            class="inline-flex text-center items-center px-3 py-2 mt-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 post_link">
+                            Read more
+                        </p>
+                        <div class="mx-auto mt-3">
+                            <x-primary-button x-data="" wire:click="confirmPostEdit({{ $post->id }})"
+                                x-on:click.prevent="$dispatch('open-modal', 'confirm-post-edit')">{{ __('Edit') }}</x-primary-button>
+                            <x-danger-button x-data=""
+                                wire:click="confirmPostDeletion({{ $post->id }})"
+                                x-on:click.prevent="$dispatch('open-modal', 'confirm-post-delete')">{{ __('Delete') }}</x-danger-button>
                         </div>
-                    @endforeach
-                @else
+                    </div>
+                @empty
                     <div class="text-center mb-6">
                         {{ __('No Post created yet!') }}
                     </div>
-                @endif
+                @endforelse ($posts as $post)
+                {{-- @dd($post) --}}
+
             </div>
         </div>
-        <div class="mt-5">
+        <div class="space-y-3" style="margin-top: 20px">
             {{ $posts->links() }}
         </div>
     </div>
@@ -84,6 +86,10 @@
                     placeholder="{{ __('Content') }}" />
 
                 <x-input-error :messages="$errors->get('content')" class="mt-2" />
+            </div>
+
+            <div class="mt-6">
+                <x-select-box wire:model='tag' class="mt-1 block w-3/4" :options="$tags" placeholder="Tag" />
             </div>
 
 
@@ -139,10 +145,15 @@
             <div class="mt-6">
                 <x-input-label for="title" value="{{ __('Content') }}" class="sr-only" />
 
-                <x-text-input wire:model="content" id="content" name="content" type="text" class="mt-1 block w-3/4"
-                    placeholder="{{ __('Content') }}" />
+                <x-text-input wire:model="content" id="content" name="content" type="text"
+                    class="mt-1 block w-3/4" placeholder="{{ __('Content') }}" />
 
                 <x-input-error :messages="$errors->get('content')" class="mt-2" />
+            </div>
+            <div class="mt-6">
+                <x-select-box wire:model='tag' class="mt-1 block w-3/4" :options="$tags" placeholder="Tag" />
+                <x-input-error :messages="$errors->get('content')" class="mt-2" />
+
             </div>
 
 

@@ -2,6 +2,7 @@
 
 use App\Livewire\Post;
 use App\Livewire\PostDetail;
+use App\Livewire\Tag;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,9 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'dashboard')
-    ->middleware(['auth'])
-    ->name('dashboard');
+// Route::view('/', Post::class)
+//     ->middleware(['auth'])
+//     ->name('posts');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -27,9 +28,14 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 Route::middleware('auth')->group(function () {
-    Route::get('/posts', Post::class)->name('posts');
 
+    // posts
+    Route::get('/', Post::class)->name('posts');
+    Route::get('/posts', Post::class)->name('posts');
     Route::get('/posts/{id}', PostDetail::class)->name('post-detail');
+
+    // tags
+    Route::get('/tags', Tag::class)->name('tags');
 });
 
 require __DIR__ . '/auth.php';

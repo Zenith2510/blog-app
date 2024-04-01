@@ -6,16 +6,21 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Models\Post as ModelsPost;
+use App\Models\Tag;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Url;
 
 class Post extends Component
 {
     use WithPagination;
-    public  $post, $title, $content, $search = '';
+    public  $post, $title, $content  = '';
     public $deleteId = '';
     public $confirmingPostDeletion = false;
     public $confirmingPostEdit = false;
-
+    public $tags;
+    public $tag;
+    #[Url]
+    public $search = '';
 
     /**
      * Update the password for the currently authenticated user.
@@ -23,12 +28,12 @@ class Post extends Component
 
     public function resetDatas()
     {
-        $this->reset('title', 'content');
+        $this->reset('title', 'content', 'tag');
     }
     public function createPost()
     {
 
-        // dd('hi');
+        // dd($this->tag);
         try {
             $validated = $this->validate([
                 'title' => ['required', 'string'],
@@ -43,6 +48,7 @@ class Post extends Component
         ModelsPost::create([
             'title' => $validated['title'],
             'content' => $validated['content'],
+            'tag_id'    => $this->tag,
         ]);
         $this->dispatch('post-created');
         // return redirect('/posts');
@@ -50,7 +56,8 @@ class Post extends Component
 
     public function render()
     {
-
+        // sleep(1);
+        $this->tags = Tag::pluck('name', 'id');
         $query = ModelsPost::query();
         // dd($query->get());
         if ($this->search != '') {
@@ -99,6 +106,8 @@ class Post extends Component
     {
         $this->title = ModelsPost::findOrFail($id)->title;
         $this->content = ModelsPost::findOrFail($id)->content;
+        $this->tag = ModelsPost::findOrFail($id)->tag_id;
+        // dd($this->tag);
         $this->confirmingPostEdit = $id;
     }
 
@@ -123,6 +132,7 @@ class Post extends Component
         $post->update([
             'title' => $validated['title'],
             'content' => $validated['content'],
+            'tag_id'    => $this->tag,
         ]);
 
         $this->reset('title', 'content');
