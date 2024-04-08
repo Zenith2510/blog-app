@@ -17,6 +17,7 @@ class Post extends Component
     public $deleteId = '';
     public $confirmingPostDeletion = false;
     public $confirmingPostEdit = false;
+    public $confirmingPostCreate = false;
     public $tags;
     public $tag;
     #[Url]
@@ -51,6 +52,8 @@ class Post extends Component
             'tag_id'    => $this->tag,
         ]);
         $this->dispatch('post-created');
+        $this->confirmingPostEdit = false;
+
         // return redirect('/posts');
     }
 
@@ -63,6 +66,8 @@ class Post extends Component
         if ($this->search != '') {
             $query = $query->where('title', 'like', "%$this->search%")
                 ->orWhere('content', 'like', "%$this->search%");
+        } else {
+            $this->reset('search');
         }
         $posts = $query->paginate(10);
         // dd($posts);

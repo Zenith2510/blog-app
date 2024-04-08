@@ -24,13 +24,18 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' =>  Hash::make('password'),
         ]);
+        \App\Models\User::factory()->create([
+            'name' => 'test',
+            'email' => 'test@test.com',
+            'password' =>  Hash::make('password'),
+        ]);
         $faker = Factory::create();
 
         // Create 5 tags with unique names
         $tags = [];
         for ($i = 0; $i < 5; $i++) {
             $tags[] = [
-                'name' => $faker->unique()->word,
+                'name' => $faker->unique()->word(),
             ];
         }
         Tag::insert($tags);
@@ -41,9 +46,10 @@ class DatabaseSeeder extends Seeder
         $posts = [];
         for ($i = 0; $i < 50; $i++) {
             $posts[] = [
-                'title' => $faker->sentence(random_int(5, 10)),
+                'title' => $faker->title(),
                 'content' => $faker->paragraphs(random_int(3, 7), true),
-                'tag_id' => $faker->randomElement($tagIds), // Random tag ID from all tags
+                'tag_id' => rand(1, 5), // Random tag ID from all tags
+                'user_id' => rand(1, 2),
             ];
         }
         Post::insert($posts);

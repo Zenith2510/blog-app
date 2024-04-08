@@ -28,7 +28,8 @@
                     <div
                         class="max-w-sm p-6 bg-white text-center mb-4 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                         <h5 class="mb-2 text-lg text-start font-bold tracking-tight text-gray-900 dark:text-white">
-                            {{ $post['title'] }} <span
+                            {{ $post['title'] }}
+                            <span
                                 class="text-gray-400">{{ $post->created_at ? $post->created_at->diffForHumans() : '' }}</span>
                             <span
                                 class="bg-white text-start text-gray-400 items-center me-2 px-3 py-0.5 rounded-full ">{{ $post->tag->name }}</span>
